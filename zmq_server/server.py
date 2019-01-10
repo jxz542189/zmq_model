@@ -98,8 +98,8 @@ class BertServer(threading.Thread):
             self.processes.append(process)
             process.start()
 
-        try:
-            while True:
+        while True:
+            try:
                 client, msg, req_id = self.frontend.recv_multipart()
                 if msg == ServerCommand.show_config:
                     self.logger.info('new config request\treq id: %d\tclient: %s' % (int(req_id), client))
@@ -136,8 +136,13 @@ class BertServer(threading.Thread):
                         s_idx += len(tmp)
                 else:
                     self.backend.send_multipart([job_id, msg])
-        except zmq.error.ContextTerminated:
-            self.logger.error('context is closed!')
+            except zmq.error.ContextTerminated:
+                self.logger.error('context is closed!')
+            except ValueError:
+                self.logger.error('received a wrongly-formatted request (expected 3 frames, got %d)' % len(request))
+                self.logger.error('\n'.join('field %d: %s' % (idx, k) for idx, k in enumerate(request)))
+
+
 
 
 class BertSink(Process):
