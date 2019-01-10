@@ -9,7 +9,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from multiprocessing import Process
-
+import uuid
 import numpy as np
 import zmq
 from termcolor import colored
@@ -24,7 +24,17 @@ def _auto_bind(socket):
     if os.name == 'nt':  # for Windows
         socket.bind_to_random_port('tcp://*')
     else:
-        socket.bind('ipc://*')
+        try:
+            tmp_dir = os.environ['ZEROMQ_SOCK_TMP_DIR']
+            if not os.path.exists(tmp_dir):
+                raise ValueError("This directory for sockets ({}) does not seems to exist.".format(tmp_dir))
+            tmp_dir = os.path.join(tmp_dir, str(uuid.uuid1())[:8])
+        except KeyError:
+            tmp_dir = '*'
+        print("DEBUG = {}".format(tmp_dir))
+        socket.bind("ipc://{}".format(tmp_dir))
+        # socket.bind('ipc://*')
+
     return socket.getsockopt(zmq.LAST_ENDPOINT).decode('ascii')
 
 
