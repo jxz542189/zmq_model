@@ -136,11 +136,25 @@ class BertClient:
         """
         # if self._is_valid_input(texts):
         #     texts = _unicode(texts)
-        if type(array) == list or type(array) == np.array:
-            self._send(jsonapi.dumps(array))
-            return self._recv_ndarray().content if blocking else None
-        else:
-            raise AttributeError('"texts" must be "List[str]" and non-empty!')
+        self._is_valid_input(array)
+        self._send(jsonapi.dumps(array))
+        return self._recv_ndarray().content if blocking else None
+
+
+    @staticmethod
+    def _is_valid_input(texts):
+        if not isinstance(texts, list):
+            raise TypeError('"texts" must be a type List, but received %s' % type(texts))
+        if not len(texts):
+            raise ValueError(
+                '"texts" must be a non-empty list, but received %s with %d elements' % (type(texts), len(texts)))
+        for idx, s in enumerate(texts):
+            if not isinstance(s, _str):
+                raise TypeError(
+                    'all elements in the list must be type String, but element %d is %s' % (idx, type(s)))
+            if not s.strip():
+                raise ValueError(
+                    'all elements in the list must be non-empty string, but element %d is %s' % (idx, repr(s)))
 
     def fetch(self, delay=.0):
         """ Fetch the encoded vectors from server, use it with `encode(blocking=False)`
@@ -200,9 +214,9 @@ class BertClient:
         t.start()
         return self.fetch(delay)
 
-    @staticmethod
-    def _is_valid_input(texts):
-        return isinstance(texts, list) and all(isinstance(s, _str) and s.strip() for s in texts)
+    # @staticmethod
+    # def _is_valid_input(texts):
+    #     return isinstance(texts, list) and all(isinstance(s, _str) and s.strip() for s in texts)
 
     @staticmethod
     def _force_to_unicode(text):
