@@ -260,11 +260,11 @@ class BertWorker(Process):
         while not self.exit_flag.is_set():
             client_id, msg = receiver.recv_multipart()
             msg = jsonapi.loads(msg)
-            print("===============================")
-            print(msg)
+            # print("===============================")
+            # print(msg)
             msg = np.array(msg)
-            "=========================================================================="
-            "具体的业务处理逻辑"
+            #"=========================================================================="
+            #"具体的业务处理逻辑"
             send_ndarray(sink, client_id, msg)
 
         receiver.close()
