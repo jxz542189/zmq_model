@@ -271,16 +271,24 @@ class BertWorker(Process):
 
         sink = context.socket(zmq.PUSH)
         sink.connect(self.sink_address)
-
+        self.logger.info('ready and listening!')
         while not self.exit_flag.is_set():
             client_id, msg = receiver.recv_multipart()
+            self.logger.info('new job\tsize: %d\tclient: %s' % (len(msg), client_id))
             msg = jsonapi.loads(msg)
             # print("===============================")
-            # print(msg)
+            # print(type(msg[0]))
             msg = np.array(msg)
+            res = []
+            res.append('a1')
+            res.append('a2')
+            msg = np.array(res)
+            # msg = np.array(['a__'+str(1)+"++"+'b__'+str(2), 'a__'+str(1)+"++"+'b__'+str(2)])
+            # msg = np.array([{'a':1}, {'a':2}])
             #"=========================================================================="
             #"具体的业务处理逻辑"
             send_ndarray(sink, client_id, msg)
+            self.logger.info('job done\tsize: %s\tclient: %s' % (len(msg), client_id))
 
         receiver.close()
         sink.close()

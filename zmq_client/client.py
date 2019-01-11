@@ -235,4 +235,4 @@ if __name__ == '__main__':
     with open('new_test.txt') as f:
         lines = f.readlines()
         lines = [re.sub('\n', '', line) for line in lines if len(re.sub('\n', '', line))]
-    print(client.encode(lines))
+    print(client.encode(lines[:2]))
