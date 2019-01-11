@@ -19,16 +19,9 @@ def get_args():
                         help='server port for receiving data from client')
     parser.add_argument('-port_out', '-port_result', type=int, default=5556,
                         help='server port for outputting result to client')
-    parser.add_argument('-pooling_layer', type=int, nargs='+', default=[-2],
-                        help='the encoder layer(s) that receives pooling. '
-                             'Give a list in order to concatenate several layers into 1.')
     parser.add_argument('-cpu', type=int, nargs='+', default=True,
                         help='the encoder layer(s) that receives pooling. '
                              'Give a list in order to concatenate several layers into 1.')
-    parser.add_argument('-gpu_memory_fraction', type=float, default=0.5,
-                        help='determines the fraction of the overall amount of memory '
-                             'that each visible GPU should be allocated per worker. '
-                             'Should be in range [0.0, 1.0]')
     args = parser.parse_args()
     param_str = '\n'.join(['%20s = %s' % (k, v) for k, v in sorted(vars(args).items())])
     print('usage: %s\n%20s   %s\n%s\n%s\n' % (' '.join(sys.argv), 'ARG', 'VALUE', '_' * 50, param_str))

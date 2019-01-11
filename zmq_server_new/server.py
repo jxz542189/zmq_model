@@ -290,7 +290,7 @@ class BertWorker(Process):
         self.worker_address = worker_address_list
         self.num_concurrent_socket = len(self.worker_address)
         self.sink_address = sink_address
-        self.gpu_memory_fraction = args.gpu_memory_fraction
+        # self.gpu_memory_fraction = args.gpu_memory_fraction
 
 
     def close(self):
